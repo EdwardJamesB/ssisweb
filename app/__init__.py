@@ -25,6 +25,9 @@ def create_app(test_config=None):
     #from .user import user_bp as user_blueprint
     #app.register_blueprint(user_blueprint)
 
+    @app.route("/")
+    def layout():
+        return render_template("layout.html")
     @app.route("/Course")
     def course():
         return render_template("course.html")
