@@ -1,0 +1,24 @@
+@media (min-width: 992px){
+    body{
+          font-size: 1vw;
+    }
+    .navbar-brand {
+        padding-top: .3125vw;
+        padding-bottom: .3125vw;
+        margin-right: 1vw;
+        font-size: 1.25vw;
+    }
+    .nav-link {
+        padding: .5vw 1vw;
+    }
+    .form-control {
+        padding: .375vw .75vw;
+        font-size: 1vw;
+        height: auto;
+    }
+    .btn{
+      padding: .375vw .75vw;
+        font-size: 1vw;
+    }
+    
+    }
