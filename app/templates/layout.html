@@ -32,8 +32,20 @@
 </nav>
 </div>
 
-<div class>
-<table class="table">
+<div class="mx-auto p-3" style="width: 1200px ;">
+  <form class="row mt-4" action="" method="">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="col-auto">
+      <input type="text" class="form-control" name="Search" placeholder="Search">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    <div class="col-auto">
+      <a href="" class="btn btn-primary">Clear</a>
+    </div>
+  </form>
+<table class="table mt-4">
   <thead class="table-dark">
     <tr>
       <th scope="col">ID</th>
