@@ -19,60 +19,20 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Student <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/Student">Student <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Course</a>
+        <a class="nav-link" href="/Course">Course</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Colleges</a>
+        <a class="nav-link" href="/College">College</a>
       </li>
     </ul>
   </div>
 </nav>
 </div>
 
-<div class="mx-auto p-3" style="width: 1200px ;">
-  <form class="row mt-4" action="" method="">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="col-auto">
-      <input type="text" class="form-control" name="Search" placeholder="Search">
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-    <div class="col-auto">
-      <a href="" class="btn btn-primary">Clear</a>
-    </div>
-  </form>
-<table class="table mt-4">
-  <thead class="table-dark">
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
-      <th scope="col">Course Code</th>
-      <th scope="col">Year</th>
-      <th scope="col">Gender</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Edward James</td>
-      <td>Bongo</td>
-      <td>CCS</td>
-      <td>4++</td>
-      <td>Transcissors</td>
-      <td>
-        <button class="btn btn-warning btn-sm" data-toggle="modal">Edit</button>
-        <button data-id="" class="btn btn-danger btn-sm btn-deleteStudent">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-</div>
+{% block content %}{% endblock %}
 
 </body>
 

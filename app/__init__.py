@@ -25,9 +25,14 @@ def create_app(test_config=None):
     #from .user import user_bp as user_blueprint
     #app.register_blueprint(user_blueprint)
 
-    @app.route("/")
-    def hello_world():
-        return render_template("layout.html")
-    
+    @app.route("/Course")
+    def course():
+        return render_template("course.html")
+    @app.route("/College")
+    def college():
+        return render_template("college.html")
+    @app.route("/Student")
+    def student():
+        return render_template("student.html")
 
     return app

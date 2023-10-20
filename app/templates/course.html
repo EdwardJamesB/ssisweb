@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block content %}  
+<div class="mx-auto p-3" style="width: 1200px ;">
+    <form class="row mt-4" action="" method="">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="col-auto">
+        <input type="text" class="form-control" name="Search" placeholder="Search">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+      <div class="col-auto">
+        <a href="" class="btn btn-primary">Clear</a>
+      </div>
+    </form>
+  <table class="table mt-4">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Code</th>
+        <th scope="col">Course Name</th>
+        <th scope="col">College</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>CCS</td>
+        <td>BS Computer Science</td>
+        <td>College of Computer Studies</td>
+        <td>
+          <button class="btn btn-warning btn-sm" data-toggle="modal">Edit</button>
+          <button data-id="" class="btn btn-danger btn-sm btn-deleteStudent">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+{% endblock %}
