@@ -30,12 +30,14 @@ def create_app(test_config=None):
         return render_template("layout.html")
     @app.route("/Course")
     def course():
-        return render_template("course.html")
+        return render_template("/course/course.html")
     @app.route("/College")
     def college():
-        return render_template("college.html")
+        return render_template("/college/college.html")
     @app.route("/Student")
     def student():
-        return render_template("student.html")
+        return render_template("/student/student.html")
+    
+    from flask import request, jsonify
 
     return app
