@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block title %}Create College{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <form action="{{ url_for('college.create') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    
+    <div class="mb-3">
+      {{ form.code.label }}
+      {{ form.code(class_="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+      {{ form.name.label }}
+      {{ form.name(class_="form-control") }}
+    </div>
+    
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-outline-success">Submit</button>
+      <a href="{{ url_for('college.index') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const codeInput = document.querySelector('input[name="code"]');
+    const nameInput = document.querySelector('input[name="name"]');
+    const submitBtn = document.querySelector('button[type="submit"]');
+
+    function toggleSubmit() {
+      if (codeInput.value.trim() && nameInput.value.trim()) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    // Initial check
+    toggleSubmit();
+
+    // Event listeners
+    codeInput.addEventListener('input', toggleSubmit);
+    nameInput.addEventListener('input', toggleSubmit);
+  });
+</script>
+
+{% endblock %}

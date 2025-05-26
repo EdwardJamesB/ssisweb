@@ -1,4 +1,4 @@
-from app import db
+from app.extensions import db
 
 class Colleges(object):
     def __init__(self, id=None, name=None, code=None):
@@ -6,34 +6,57 @@ class Colleges(object):
         self.name = name
         self.code = code
 
-    def all(keyword):
-        cursor = db.cursor()
-        query = f"SELECT * FROM colleges WHERE name LIKE '%{keyword}%' OR code LIKE '%{keyword}%'"
-        cursor.execute(query)
+    @staticmethod
+    def all(keyword='', sort_order='asc'):
+        conn = db.connection
+        cursor = conn.cursor(dictionary=True)
 
+        # Validate sort_order
+        sort_order = sort_order.upper()
+        if sort_order not in ['ASC', 'DESC']:
+            sort_order = 'ASC'
+
+        query = """
+            SELECT id, code, name FROM college
+            WHERE name LIKE %s OR code LIKE %s
+            ORDER BY code {}
+        """.format('ASC' if sort_order.lower() == 'asc' else 'DESC')
+        wildcard_keyword = f"%{keyword}%"
+        cursor.execute(query, (wildcard_keyword, wildcard_keyword))
         return cursor.fetchall()
 
     def add(self):
-        cursor = db.cursor()
-        query = f"INSERT INTO colleges (code, name) VALUES ('{self.code}', '{self.name}')"
-        cursor.execute(query)
-        db.commit()
+        conn = db.connection
+        cursor = conn.cursor()
+        query = "INSERT INTO college (code, name) VALUES (%s, %s)"
+        cursor.execute(query, (self.code, self.name))
+        conn.commit()
+        cursor.close()
 
+    @staticmethod
     def edit(id):
-        cursor = db.cursor()
-        query = f"SELECT * FROM colleges WHERE id = {id}"
-        cursor.execute(query)
+        conn = db.connection
+        cursor = conn.cursor()
+        query = "SELECT * FROM college WHERE id = %s"
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
 
-        return cursor.fetchone()
-
+    @staticmethod
     def update(id, code, name):
-        cursor = db.cursor()
-        query = f"UPDATE colleges SET code = '{code}', name = '{name}' WHERE id = {id}"
-        cursor.execute(query)
-        db.commit()
+        conn = db.connection
+        cursor = conn.cursor()
+        query = "UPDATE college SET code = %s, name = %s WHERE id = %s"
+        cursor.execute(query, (code, name, id))
+        conn.commit()
+        cursor.close()
 
+    @staticmethod
     def delete(id):
-        cursor = db.cursor()
-        query = f"DELETE from colleges WHERE id = {id}"
-        cursor.execute(query)
-        db.commit()
+        conn = db.connection
+        cursor = conn.cursor()
+        query = "DELETE FROM college WHERE id = %s"
+        cursor.execute(query, (id,))
+        conn.commit()
+        cursor.close()

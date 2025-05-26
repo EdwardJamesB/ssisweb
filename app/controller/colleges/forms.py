@@ -3,7 +3,7 @@ from wtforms import StringField, validators, SubmitField, SelectField
 import app.models.college as models
 
 
-class collegeForm(FlaskForm):
+class CollegeForm(FlaskForm):
     code = StringField("Code", [validators.DataRequired()])
     name = StringField("Name", [validators.DataRequired()])
     submit = SubmitField("Submit")
