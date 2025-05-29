@@ -15,7 +15,7 @@ def create_app(test_config=None):
         MYSQL_PASSWORD=DB_PASSWORD,
         MYSQL_DATABASE=DB_NAME,
         MYSQL_HOST=DB_HOST,
-        # BOOTSTRAP_SERVE_LOCAL=BOOTSTRAP_SERVE_LOCAL
+        BOOTSTRAP_SERVE_LOCAL=BOOTSTRAP_SERVE_LOCAL
     )
 
     # ✅ Initialize extensions AFTER app is defined

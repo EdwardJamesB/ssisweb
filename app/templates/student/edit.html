@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Edit Student</h2>
+  <form method="post" action="{{ url_for('student.update', student_id=data[0]) }}" id="editStudentForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="mb-3">
+      <label>Student ID</label>
+      <input class="form-control" type="text" name="student_id" value="{{ data[0] }}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label>Firstname</label>
+      <input class="form-control" type="text" name="firstname" value="{{ data[1] }}">
+    </div>
+
+    <div class="mb-3">
+      <label>Lastname</label>
+      <input class="form-control" type="text" name="lastname" value="{{ data[2] }}">
+    </div>
+
+    <div class="mb-3">
+      <label>Gender</label>
+      <select class="form-control" name="gender">
+        <option {% if data[3] == 'Male' %}selected{% endif %}>Male</option>
+        <option {% if data[3] == 'Female' %}selected{% endif %}>Female</option>
+        <option {% if data[3] == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Course</label>
+      <input class="form-control" type="text" name="course" value="{{ data[4] }}">
+    </div>
+
+    <div class="mb-3">
+      <label>Year</label>
+      <input class="form-control" type="number" name="year" value="{{ data[5] }}">
+    </div>
+
+    <button id="updateBtn" class="btn btn-success" disabled>Update</button>
+    <a href="{{ url_for('student.index') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('editStudentForm');
+  const updateBtn = document.getElementById('updateBtn');
+  const original = new FormData(form);
+
+  form.addEventListener('input', () => {
+    const current = new FormData(form);
+    let changed = false;
+    for (let key of original.keys()) {
+      if (original.get(key) !== current.get(key)) {
+        changed = true;
+        break;
+      }
+    }
+    updateBtn.disabled = !changed;
+  });
+</script>
+{% endblock %}

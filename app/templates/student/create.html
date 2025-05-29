@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Add New Student</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="mb-3">{{ form.student_id.label }} {{ form.student_id(class_="form-control") }}</div>
+    <div class="mb-3">{{ form.firstname.label }} {{ form.firstname(class_="form-control") }}</div>
+    <div class="mb-3">{{ form.lastname.label }} {{ form.lastname(class_="form-control") }}</div>
+    <div class="mb-3">{{ form.gender.label }} {{ form.gender(class_="form-select") }}</div>
+    <div class="mb-3">{{ form.course.label }} {{ form.course(class_="form-select") }}</div>
+    <div class="mb-3">{{ form.year.label }} {{ form.year(class_="form-select") }}</div>
+
+    <button type="submit" class="btn btn-success" disabled>Submit</button>
+    <a href="{{ url_for('student.index') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const submitBtn = form.querySelector("button[type=submit]");
+    
+    const inputs = form.querySelectorAll("input, select");
+    
+    function checkForm() {
+      let isValid = true;
+      inputs.forEach(input => {
+        if (input.type !== "hidden" && !input.value.trim()) {
+          isValid = false;
+        }
+      });
+      submitBtn.disabled = !isValid;
+    }
+
+    inputs.forEach(input => {
+      input.addEventListener("input", checkForm);
+      input.addEventListener("change", checkForm);
+    });
+
+    // Initial check
+    checkForm();
+  });
+</script>
+
+{% endblock %}

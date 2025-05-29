@@ -13,10 +13,11 @@
     <div class="col-md-auto">
       <button type="submit" class="btn btn-primary">Search</button>
       <a href="{{ url_for('college.index', sort='asc') }}" class="btn btn-secondary">Clear</a>
-      {% set next_sort = 'desc' if request.args.get('sort') == 'asc' else 'asc' %}
-      <a href="{{ url_for('college.index', keyword=request.args.get('keyword', ''), sort='desc' if request.args.get('sort') == 'asc' else 'asc') }}" 
+      {% set current_sort = request.args.get('sort', 'asc') %}
+      {% set next_sort = 'desc' if current_sort == 'asc' else 'asc' %}
+      <a href="{{ url_for('college.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" 
         class="btn btn-info">
-        Sort by Code {{ '↓' if request.args.get('sort') == 'asc' else '↑' }}
+        Sort by Code {{ '↓' if current_sort == 'asc' else '↑' }}
       </a>
     </div>
   </form>
