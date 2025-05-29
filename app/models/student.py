@@ -32,7 +32,7 @@ class Students:
             INSERT INTO student (student_id, firstname, lastname, gender, course, year)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (self.student_id, self.firstname, self.lastname, self.gender, self.course, self.year))
+        cursor.execute(query, (self.student_id, self.firstname, self.lastname, self.gender, int(self.course), self.year))
         db.connection.commit()
 
     @staticmethod

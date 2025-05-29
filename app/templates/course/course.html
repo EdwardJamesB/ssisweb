@@ -1,41 +1,59 @@
 {% extends "layout.html" %}
-{% block content %}  
-<div class="mx-auto p-3" style="width: 1200px ;">
-    <form class="row mt-4" action="" method="">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <div class="col-auto">
-        <input type="text" class="form-control" name="Search" placeholder="Search">
-      </div>
-      <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Search</button>
-      </div>
-      <div class="col-auto">
-        <a href="" class="btn btn-primary">Clear</a>
-      </div>
-    </form>
-  <table class="table mt-4">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Code</th>
-        <th scope="col">Course Name</th>
-        <th scope="col">College</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>CCS</td>
-        <td>BS Computer Science</td>
-        <td>College of Computer Studies</td>
-        <td>
-          <button class="btn btn-warning btn-sm" data-toggle="modal">Edit</button>
-          <button data-id="" class="btn btn-danger btn-sm btn-deleteStudent">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
+{% block title %}Courses{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Courses</h2>
 
+  <!-- Search + Sort -->
+  <form method="get" action="{{ url_for('course.index') }}" class="row g-2 mb-3">
+    <div class="col-md-4">
+      <input type="text" class="form-control" name="keyword" placeholder="Search" value="{{ request.args.get('keyword', '') }}">
+    </div>
+    <div class="col-md-auto">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="{{ url_for('course.index') }}" class="btn btn-secondary">Clear</a>
+    </div>
+    <div class="col-md-auto">
+      {% set next_sort = 'desc' if sort_order == 'asc' else 'asc' %}
+      <a href="{{ url_for('course.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" class="btn btn-info">
+        Sort by Code {{ '↓' if sort_order == 'asc' else '↑' }}
+      </a>
+    </div>
+  </form>
+
+  <a href="{{ url_for('course.create') }}" class="btn btn-success mb-3">Add Course</a>
+
+  <div class="card">
+    <table class="table mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>College</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for course in courses %}
+        <tr>
+          <td>{{ course.code }}</td>
+          <td>{{ course.name }}</td>
+          <td>{{ course.college_name or '—' }}</td>
+          <td>
+            <a href="{{ url_for('course.edit', code=course.code) }}" class="btn btn-warning btn-sm">Edit</a>
+            <form action="{{ url_for('course.delete') }}" method="post" class="d-inline">
+              <input type="hidden" name="code" value="{{ course.code }}">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="text-center">No courses found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

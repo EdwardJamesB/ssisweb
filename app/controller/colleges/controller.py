@@ -15,6 +15,10 @@ def create():
     form = CollegeForm(request.form)
     
     if request.method == 'POST' and form.validate():
+        if CollegeModel.Colleges.exists(form.code.data):
+            error = "College code already exists!"
+            return render_template('college/create.html', form=form, error=error)
+
         college = CollegeModel.Colleges(code=form.code.data, name=form.name.data)
         college.add()
 

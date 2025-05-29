@@ -15,7 +15,7 @@ class StudentForm(FlaskForm):
         ],
         validators=[DataRequired()]
     )
-    course = SelectField('Course', coerce=str, validators=[DataRequired()])
+    course = SelectField('Course', coerce=int, validators=[DataRequired()])
     year = SelectField(
         'Year Level',
         choices=[

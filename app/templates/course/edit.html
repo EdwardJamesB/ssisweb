@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}Edit Course{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center">
+  <form id="editCourseForm" action="/course/update/{{ data[0] }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="mb-3">
+      <label for="code">Course Code</label>
+      <input type="text" id="code" name="code" class="form-control" value="{{ data[0] }}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="name">Course Name</label>
+      <input type="text" id="name" name="name" class="form-control" value="{{ data[1] }}">
+    </div>
+
+    <div class="mb-3">
+      <label for="college">College</label>
+      <select id="college" name="college" class="form-select">
+        {% for c in colleges %}
+          <option value="{{ c[0] }}" {% if c[0] == data[2] %}selected{% endif %}>{{ c[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" id="updateBtn" class="btn btn-outline-success" disabled>Update</button>
+    <a href="{{ url_for('course.index') }}" class="btn btn-outline-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('name');
+    const collegeSelect = document.getElementById('college');
+    const updateBtn = document.getElementById('updateBtn');
+
+    const originalName = nameInput.value;
+    const originalCollege = collegeSelect.value;
+
+    function checkChanges() {
+      if (nameInput.value !== originalName || collegeSelect.value !== originalCollege) {
+        updateBtn.disabled = false;
+      } else {
+        updateBtn.disabled = true;
+      }
+    }
+
+    nameInput.addEventListener('input', checkChanges);
+    collegeSelect.addEventListener('change', checkChanges);
+  });
+</script>
+{% endblock %}

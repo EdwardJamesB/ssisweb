@@ -30,6 +30,9 @@ def create_app(test_config=None):
     from app.controller.students import student as student_blueprint
     app.register_blueprint(student_blueprint, url_prefix="/student")
 
+    from app.controller.courses import course as course_blueprint
+    app.register_blueprint(course_blueprint, url_prefix="/course")
+
     @app.route("/")
     def layout():
         return render_template("layout.html")

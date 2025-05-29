@@ -60,3 +60,13 @@ class Colleges(object):
         cursor.execute(query, (id,))
         conn.commit()
         cursor.close()
+
+    @staticmethod
+    def exists(code):
+        conn = db.connection
+        cursor = conn.cursor()
+        query = "SELECT COUNT(*) FROM college WHERE code = %s"
+        cursor.execute(query, (code,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result[0] > 0
