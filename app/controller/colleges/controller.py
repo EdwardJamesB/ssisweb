@@ -8,7 +8,7 @@ def index():
     keyword = request.args.get('keyword', default='', type=str)
     sort_order = request.args.get('sort', 'asc')  # default to ascending
     colleges = CollegeModel.Colleges.all(keyword, sort_order)
-    return render_template("college/college.html", colleges=colleges)
+    return render_template("college/college.html", colleges=colleges, sort_order=sort_order)
 
 @college.route("/college/create", methods=['POST', 'GET'])
 def create():

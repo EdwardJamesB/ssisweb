@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Simple Student Information System Web Application</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
 </head>
@@ -19,10 +19,10 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="/Student">Student <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('student.index') }}">Student <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/Course">Course</a>
+        <a class="nav-link" href="{{ url_for('course.index') }}">Course</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('college.index') }}">College</a>

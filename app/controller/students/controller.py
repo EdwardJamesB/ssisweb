@@ -20,7 +20,7 @@ def create():
 
     # Dynamically populate course choices
     courses = CourseModel.Courses.all()
-    form.course.choices = [(c['id'], c['name']) for c in courses]
+    form.course.choices = [(c['code'], c['name']) for c in courses]
 
     if request.method == 'POST' and form.validate():
         student = StudentModel.Students(

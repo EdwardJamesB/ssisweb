@@ -17,7 +17,7 @@
       {% set next_sort = 'desc' if current_sort == 'asc' else 'asc' %}
       <a href="{{ url_for('college.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" 
         class="btn btn-info">
-        Sort by Code {{ '↓' if current_sort == 'asc' else '↑' }}
+        Sort by Code {{ '↑' if current_sort == 'asc' else '↓' }}
       </a>
     </div>
   </form>

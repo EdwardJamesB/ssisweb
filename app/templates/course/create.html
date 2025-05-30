@@ -22,14 +22,16 @@
     <div class="mb-3">
       <label for="college">College</label>
       <select name="college" class="form-select" required>
+        <option value="" disabled selected>-- Please select a college --</option>
         {% for c in form.college.choices %}
-          <option value="{{ c[1] }}">{{ c[1] }}</option>
+          <option value="{{ c[0] }}">{{ c[1] }}</option>
         {% endfor %}
       </select>
     </div>
-
-    <button type="submit" id="submitBtn" class="btn btn-outline-success" disabled>Submit</button>
-    <a href="{{ url_for('course.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    <div class="d-flex justify-content-between">
+      <button type="submit" id="submitBtn" class="btn btn-outline-success" disabled>Submit</button>
+      <a href="{{ url_for('course.index') }}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
   </form>
 </div>
 

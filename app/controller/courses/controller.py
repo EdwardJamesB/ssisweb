@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from . import course
 from app.controller.courses.forms import CourseForm
+from app.controller.courses.forms import DeleteCourseForm
 import app.models.course as CourseModel
 import app.models.college as CollegeModel
 
@@ -8,7 +9,11 @@ import app.models.college as CollegeModel
 @course.route('/', endpoint='index')
 def index():
     keyword = request.args.get('keyword', default='', type=str)
-    sort_order = request.args.get('sort', 'asc')
+    sort_order = request.args.get('sort')
+
+    if not sort_order:
+        sort_order = 'asc'
+
     courses = CourseModel.Courses.all(keyword, sort_order)
     return render_template('course/course.html', courses=courses, sort_order=sort_order)
 
@@ -17,20 +22,30 @@ def index():
 def create():
     form = CourseForm()
     colleges = CollegeModel.Colleges.all()
-    form.college.choices = [(c['code'], c['name']) for c in colleges]
+    form.college.choices = [(c['id'], c['name']) for c in colleges]
 
-    if request.method == 'POST' and form.validate():
-        if CourseModel.Courses.exists(form.code.data):
-            error = "Course code already exists!"
-            return render_template('course/create.html', form=form, error=error)
+    if request.method == 'POST':
+        print("[DEBUG] Form submitted")
+        print("Form data:", request.form)
+        print("Form errors:", form.errors)
 
-        course = CourseModel.Courses(
-            code=form.code.data,
-            name=form.name.data,
-            college=form.college.data
-        )
-        course.add()
-        return redirect(url_for('.index'))
+        if form.validate():
+            print("[DEBUG] Form validated ✅")
+            if CourseModel.Courses.exists(form.code.data):
+                print("[DEBUG] Course already exists ❌")
+                error = "Course code already exists!"
+                return render_template('course/create.html', form=form, error=error)
+
+            course = CourseModel.Courses(
+                code=form.code.data,
+                name=form.name.data,
+                college=form.college.data
+            )
+            print("[DEBUG] Adding course:", course.code, course.name, course.college)
+            course.add()
+            return redirect(url_for('.index'))
+        
+        print("[DEBUG] Submitted college value:", form.college.data)
 
     return render_template('course/create.html', form=form)
 
@@ -40,19 +55,29 @@ def edit(code):
     course = CourseModel.Courses.get(code)
     if not course:
         return redirect(url_for('.index'))
-    return render_template('course/edit.html', data=course)
+
+    colleges = CollegeModel.Colleges.all()
+    return render_template('course/edit.html', data=(course['code'], course['name'], course['college']), colleges=CollegeModel.Colleges.all())
 
 # Update course
-@course.route('/update/<string:code>', methods=['POST'])
-def update(code):
+@course.route('/update', methods=['POST'])
+def update():
+    original_code = request.form['original_code']
+    new_code = request.form['code']
     name = request.form['name']
     college = request.form['college']
-    CourseModel.Courses.update(code, name, college)
+
+    CourseModel.Courses.update(original_code, new_code, name, college)
     return redirect(url_for('.index'))
+
 
 # Delete course
 @course.route('/delete', methods=['POST'])
 def delete():
-    code = request.form['code']
-    CourseModel.Courses.delete(code)
-    return redirect(url_for('.index'))
+    form = DeleteCourseForm()
+
+    if form.validate_on_submit():
+        CourseModel.Courses.delete(form.code.data)
+        return redirect(url_for('.index'))
+
+    return "Invalid delete request", 400

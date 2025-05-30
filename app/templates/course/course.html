@@ -16,7 +16,7 @@
     <div class="col-md-auto">
       {% set next_sort = 'desc' if sort_order == 'asc' else 'asc' %}
       <a href="{{ url_for('course.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" class="btn btn-info">
-        Sort by Code {{ '↓' if sort_order == 'asc' else '↑' }}
+        Sort by Code {{ '↑' if sort_order == 'asc' else '↓' }}
       </a>
     </div>
   </form>
@@ -38,10 +38,11 @@
         <tr>
           <td>{{ course.code }}</td>
           <td>{{ course.name }}</td>
-          <td>{{ course.college_name or '—' }}</td>
+          <td>{{ course.college_name if course.college_name else '(No College)' }}</td>
           <td>
             <a href="{{ url_for('course.edit', code=course.code) }}" class="btn btn-warning btn-sm">Edit</a>
             <form action="{{ url_for('course.delete') }}" method="post" class="d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="code" value="{{ course.code }}">
               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>

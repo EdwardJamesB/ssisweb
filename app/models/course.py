@@ -10,39 +10,54 @@ class Courses:
     def add(self):
         conn = db.connection
         cursor = conn.cursor()
-        query = "INSERT INTO course (code, name, college) VALUES (%s, %s, %s)"
-        cursor.execute(query, (self.code, self.name, self.college))
-        conn.commit()
+        try:
+            query = "INSERT INTO course (code, name, college) VALUES (%s, %s, %s)"
+            cursor.execute(query, (self.code, self.name, self.college))
+            conn.commit()
+            print("[DEBUG] Course added successfully")
+        except Exception as e:
+            print("[ERROR] Failed to add course:", e)
 
     @staticmethod
-    def all(keyword=''):
+    def all(keyword='', sort_order='asc'):
         conn = db.connection
         cursor = conn.cursor(dictionary=True)
-        wildcard = f"%{keyword}%"
-        query = """
-            SELECT course.id, course.code, course.name, college.name AS college_name
-            FROM course
-            LEFT JOIN college ON course.college = college.code
-            WHERE course.code LIKE %s OR course.name LIKE %s
-            ORDER BY course.code ASC
-        """
-        cursor.execute(query, (wildcard, wildcard))
+
+        if keyword:
+            wildcard = f"%{keyword}%"
+            query = f"""
+                SELECT course.code, course.name, college.name AS college_name
+                FROM course
+                JOIN college ON course.college = college.id
+                WHERE course.code LIKE %s OR course.name LIKE %s OR college.name LIKE %s
+                ORDER BY course.code {'ASC' if sort_order == 'asc' else 'DESC'}
+            """
+            cursor.execute(query, (wildcard, wildcard, wildcard))
+        else:
+            query = f"""
+                SELECT course.code, course.name, college.name AS college_name
+                FROM course
+                JOIN college ON course.college = college.id
+                ORDER BY course.code {'ASC' if sort_order == 'asc' else 'DESC'}
+            """
+            cursor.execute(query)
+
         return cursor.fetchall()
 
     @staticmethod
-    def get(id):
+    def get(code):
         conn = db.connection
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT * FROM course WHERE id = %s"
-        cursor.execute(query, (id,))
+        query = "SELECT * FROM course WHERE code = %s"
+        cursor.execute(query, (code,))
         return cursor.fetchone()
 
     @staticmethod
-    def update(id, code, name, college):
+    def update(original_code, new_code, name, college):
         conn = db.connection
         cursor = conn.cursor()
-        query = "UPDATE course SET code = %s, name = %s, college = %s WHERE id = %s"
-        cursor.execute(query, (code, name, college, id))
+        query = "UPDATE course SET code = %s, name = %s, college = %s WHERE code = %s"
+        cursor.execute(query, (new_code, name, college, original_code))
         conn.commit()
 
     @staticmethod
@@ -61,4 +76,3 @@ class Courses:
         cursor.execute(query, (code,))
         result = cursor.fetchone()
         return result[0] > 0
-
