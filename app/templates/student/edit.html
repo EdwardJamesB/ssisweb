@@ -4,41 +4,49 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Edit Student</h2>
-  <form method="post" action="{{ url_for('student.update', student_id=data[0]) }}" id="editStudentForm">
+  <form method="post" action="{{ url_for('student.update', student_id=form.student_id.data) }}" id="editStudentForm">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
     <div class="mb-3">
       <label>Student ID</label>
-      <input class="form-control" type="text" name="student_id" value="{{ data[0] }}" readonly>
+      <input class="form-control" type="text" name="student_id" value="{{ form.student_id.data }}" readonly>
     </div>
 
     <div class="mb-3">
       <label>Firstname</label>
-      <input class="form-control" type="text" name="firstname" value="{{ data[1] }}">
+      <input class="form-control" type="text" name="firstname" value="{{ form.firstname.data }}">
     </div>
 
     <div class="mb-3">
       <label>Lastname</label>
-      <input class="form-control" type="text" name="lastname" value="{{ data[2] }}">
+      <input class="form-control" type="text" name="lastname" value="{{ form.lastname.data }}">
     </div>
 
     <div class="mb-3">
       <label>Gender</label>
       <select class="form-control" name="gender">
-        <option {% if data[3] == 'Male' %}selected{% endif %}>Male</option>
-        <option {% if data[3] == 'Female' %}selected{% endif %}>Female</option>
-        <option {% if data[3] == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+        <option {% if form.gender.data == 'Male' %}selected{% endif %}>Male</option>
+        <option {% if form.gender.data == 'Female' %}selected{% endif %}>Female</option>
+        <option {% if form.gender.data == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
       </select>
     </div>
 
     <div class="mb-3">
       <label>Course</label>
-      <input class="form-control" type="text" name="course" value="{{ data[4] }}">
+      <select class="form-control" name="course">
+        {% for code, name in form.course.choices %}
+          <option value="{{ code }}" {% if code == form.course.data %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+      </select>
     </div>
 
     <div class="mb-3">
       <label>Year</label>
-      <input class="form-control" type="number" name="year" value="{{ data[5] }}">
+      <select class="form-control" name="year">
+        {% for val, label in form.year.choices %}
+          <option value="{{ val }}" {% if val == form.year.data %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
     </div>
 
     <button id="updateBtn" class="btn btn-success" disabled>Update</button>

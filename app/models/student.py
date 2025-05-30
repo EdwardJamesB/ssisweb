@@ -11,13 +11,15 @@ class Students:
 
     @staticmethod
     def all(keyword='', sort_order='asc'):
-        query = """
-            SELECT student_id, firstname, lastname, gender, course, year
+        query = f"""
+            SELECT student.student_id, student.firstname, student.lastname, student.gender,
+                course.name AS course_name, student.year
             FROM student
-            WHERE student_id LIKE %s OR firstname LIKE %s OR lastname LIKE %s
-            ORDER BY student_id {order}
-        """.format(order='ASC' if sort_order.lower() == 'asc' else 'DESC')
-        
+            LEFT JOIN course ON student.course = course.code  -- or course.id if you're using numeric FK
+            WHERE student.student_id LIKE %s OR student.firstname LIKE %s OR student.lastname LIKE %s
+            ORDER BY student.student_id {'ASC' if sort_order.lower() == 'asc' else 'DESC'}
+        """
+
         wildcard_keyword = f"%{keyword}%"
         cursor = db.connection.cursor()
         cursor.execute(query, (wildcard_keyword, wildcard_keyword, wildcard_keyword))
@@ -32,7 +34,7 @@ class Students:
             INSERT INTO student (student_id, firstname, lastname, gender, course, year)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (self.student_id, self.firstname, self.lastname, self.gender, int(self.course), self.year))
+        cursor.execute(query, (self.student_id, self.firstname, self.lastname, self.gender, self.course, self.year))
         db.connection.commit()
 
     @staticmethod
