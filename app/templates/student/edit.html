@@ -13,40 +13,28 @@
     </div>
 
     <div class="mb-3">
-      <label>Firstname</label>
-      <input class="form-control" type="text" name="firstname" value="{{ form.firstname.data }}">
+      {{ form.firstname.label }}
+      {{ form.firstname(class="form-control") }}
     </div>
 
     <div class="mb-3">
-      <label>Lastname</label>
-      <input class="form-control" type="text" name="lastname" value="{{ form.lastname.data }}">
+      {{ form.lastname.label }}
+      {{ form.lastname(class="form-control") }}
     </div>
 
     <div class="mb-3">
-      <label>Gender</label>
-      <select class="form-control" name="gender">
-        <option {% if form.gender.data == 'Male' %}selected{% endif %}>Male</option>
-        <option {% if form.gender.data == 'Female' %}selected{% endif %}>Female</option>
-        <option {% if form.gender.data == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
-      </select>
+      {{ form.gender.label }}
+      {{ form.gender(class="form-select") }}
     </div>
 
     <div class="mb-3">
-      <label>Course</label>
-      <select class="form-control" name="course">
-        {% for code, name in form.course.choices %}
-          <option value="{{ code }}" {% if code == form.course.data %}selected{% endif %}>{{ name }}</option>
-        {% endfor %}
-      </select>
+      {{ form.course.label }}
+      {{ form.course(class="form-select") }}
     </div>
 
     <div class="mb-3">
-      <label>Year</label>
-      <select class="form-control" name="year">
-        {% for val, label in form.year.choices %}
-          <option value="{{ val }}" {% if val == form.year.data %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
+      {{ form.year.label }}
+      {{ form.year(class="form-select") }}
     </div>
 
     <button id="updateBtn" class="btn btn-success" disabled>Update</button>
@@ -59,7 +47,7 @@
   const updateBtn = document.getElementById('updateBtn');
   const original = new FormData(form);
 
-  form.addEventListener('input', () => {
+  form.addEventListener('change', () => {
     const current = new FormData(form);
     let changed = false;
     for (let key of original.keys()) {

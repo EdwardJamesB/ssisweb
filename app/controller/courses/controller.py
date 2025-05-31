@@ -68,6 +68,7 @@ def update():
     college = request.form['college']
 
     CourseModel.Courses.update(original_code, new_code, name, college)
+    print("Course updated successfully")
     return redirect(url_for('.index'))
 
 

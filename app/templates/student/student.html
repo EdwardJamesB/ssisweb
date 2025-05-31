@@ -47,7 +47,8 @@
         <td>
           <a href="{{ url_for('student.edit', student_id=s[0]) }}" class="btn btn-warning btn-sm">Edit</a>
           <form action="{{ url_for('student.delete') }}" method="post" class="d-inline delete-form">
-            <input type="hidden" name="student_id" value="{{ s[0] }}">
+            {{ csrf_token() }}
+            <input type="hidden" name="student_id" value="{{ s.student_id }}">
             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
           </form>
         </td>

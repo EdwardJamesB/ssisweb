@@ -18,16 +18,23 @@ def index():
 def create():
     form = StudentForm()
 
-    # ✅ Load college choices into the dropdown
-    colleges = CollegeModel.Colleges.all()
-    form.college.choices = [("", "-- Please select a college --")] + [
-        (str(c['id']), c['name']) for c in colleges
+    # Populate dropdowns
+    form.gender.choices = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Prefer not to say', 'Prefer not to say')
     ]
-
-    # Dynamically populate course choices
-    courses = CourseModel.Courses.all()
+    form.year.choices = [
+        ('1st Year', '1st Year'),
+        ('2nd Year', '2nd Year'),
+        ('3rd Year', '3rd Year'),
+        ('4th Year', '4th Year')
+    ]
+    form.college.choices = [("", "-- Please select a college --")] + [
+        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
+    ]
     form.course.choices = [("", "-- Please select a course --")] + [
-        (c["code"], f'{c["code"]} - {c["name"]}') for c in courses
+        (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
 
     if request.method == 'POST' and form.validate():
@@ -36,13 +43,14 @@ def create():
             firstname=form.firstname.data,
             lastname=form.lastname.data,
             gender=form.gender.data,
-            course = form.course.data,  
+            course=form.course.data,  
             year=form.year.data
         )
         student.add()
         return redirect(url_for('.index'))
 
     return render_template('student/create.html', form=form)
+
 
 # Edit student
 @student.route('/edit/<string:student_id>', methods=['GET'])
@@ -68,25 +76,27 @@ def edit(student_id):
         (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
 
-    return render_template('student/edit.html', form=form)
+    return render_template('student/edit.html', form=form, student_id=student_id)
 
-# Update student
 @student.route('/update/<string:student_id>', methods=['POST'])
 def update(student_id):
-    form = StudentForm()
+    # Manually get POST data
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+    gender = request.form.get('gender')
+    course = request.form.get('course')
+    year = request.form.get('year')
 
-    if form.validate_on_submit():
-        StudentModel.Students.update(
-            student_id=student_id,
-            firstname=form.firstname.data,
-            lastname=form.lastname.data,
-            gender=form.gender.data,
-            course=form.course.data,
-            year=form.year.data
-        )
-        return redirect(url_for('.index'))
-
-    return render_template('student/edit.html', form=form)
+    # Perform update
+    StudentModel.Students.update(
+        student_id=student_id,
+        firstname=firstname,
+        lastname=lastname,
+        gender=gender,
+        course=course,
+        year=year
+    )
+    return redirect(url_for('student.index'))
 
 # Delete student
 @student.route('/delete', methods=['POST'])

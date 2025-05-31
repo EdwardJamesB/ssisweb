@@ -38,6 +38,8 @@ def update(id):
         code = request.form['code']
         name = request.form['name']
         CollegeModel.Colleges.update(id, code, name)
+
+        print("College updated successfully")
         return redirect(url_for('.index'))
 
 @college.route('/college/delete', methods=['POST'])

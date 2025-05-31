@@ -55,7 +55,7 @@ class Students:
             WHERE student_id = %s
         """
         cursor.execute(query, (firstname, lastname, gender, course, year, student_id))
-        db.connection.commit()
+        conn.commit()
 
     @staticmethod
     def delete(student_id):

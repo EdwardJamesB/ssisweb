@@ -6,8 +6,11 @@ class StudentForm(FlaskForm):
     student_id = StringField('Student ID', validators=[DataRequired()])
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
-    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female')], validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[
+        ('Male', 'Male'), 
+        ('Female', 'Female'),
+        ('Prefer not to say', 'Prefer not to say')
+    ], validators=[DataRequired()])
     course = SelectField('Course', coerce=str, validators=[DataRequired()])
-    year = SelectField('Year Level', choices=[('1st Year', '1st Year'), ('2nd Year', '2nd Year'),
-                                               ('3rd Year', '3rd Year'), ('4th Year', '4th Year')], validators=[DataRequired()])
+    year = SelectField('Year Level', coerce=str, validators=[DataRequired()])
     college = SelectField('College', coerce=str, validators=[DataRequired()])
