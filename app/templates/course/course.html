@@ -41,7 +41,7 @@
           <td>{{ course.college_name if course.college_name else '(No College)' }}</td>
           <td>
             <a href="{{ url_for('course.edit', code=course.code) }}" class="btn btn-warning btn-sm">Edit</a>
-            <form action="{{ url_for('course.delete') }}" method="post" class="d-inline">
+            <form method="post" action="{{ url_for('course.delete') }}" class="d-inline delete-form">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="code" value="{{ course.code }}">
               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -57,4 +57,27 @@
     </table>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "This course will be permanently deleted.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+
 {% endblock %}

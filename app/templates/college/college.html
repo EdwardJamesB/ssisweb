@@ -42,7 +42,7 @@
           <td>{{ college.name }}</td>
           <td>
             <a href="{{ url_for('college.edit', id=college.id) }}" class="btn btn-warning btn-sm">Edit</a>
-            <form method="POST" class="d-inline delete-form">
+            <form method="POST" action="{{ url_for('college.delete') }}" class="d-inline delete-form">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="id" value="{{ college.id }}">
               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -72,7 +72,6 @@
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, delete it!',
-        reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
           form.submit(); // only submit if confirmed

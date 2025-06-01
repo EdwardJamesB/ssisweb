@@ -64,7 +64,7 @@ class Courses:
     def delete(id):
         conn = db.connection
         cursor = conn.cursor()
-        query = "DELETE FROM course WHERE id = %s"
+        query = "DELETE FROM course WHERE code = %s"
         cursor.execute(query, (id,))
         conn.commit()
 
