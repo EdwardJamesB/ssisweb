@@ -4,12 +4,31 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Edit Student</h2>
-  <form method="post" action="{{ url_for('student.update', student_id=form.student_id.data) }}" id="editStudentForm">
+  <form method="post" action="{{ url_for('student.update', student_id=form.student_id.data) }}" enctype="multipart/form-data" id="editStudentForm">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
     <div class="mb-3">
       <label>Student ID</label>
       <input class="form-control" type="text" name="student_id" value="{{ form.student_id.data }}" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label>Current Profile Picture</label><br>
+      {% if form.image_url.data %}
+        <img src="{{ form.image_url.data }}" alt="Current" width="80" height="80" style="border-radius: 50%; object-fit: cover;">
+      {% else %}
+        <img src="{{ url_for('static', filename='img/default-avatar.png') }}" alt="Default" width="80" height="80" style="border-radius: 50%; object-fit: cover;">
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label>Change Profile Picture</label>
+      <input class="form-control" type="file" name="profile_pic" accept="image/*">
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" name="remove_pic" id="remove_pic">
+      <label class="form-check-label" for="remove_pic">Reset to default avatar</label>
     </div>
 
     <div class="mb-3">

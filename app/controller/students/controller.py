@@ -4,6 +4,8 @@ from app.controller.students.forms import StudentForm
 import app.models.student as StudentModel
 import app.models.course as CourseModel
 import app.models.college as CollegeModel
+from app.cloudinary_config import cloudinary
+import cloudinary.uploader
 
 # Show list of students
 @student.route('/', endpoint='index')
@@ -48,9 +50,26 @@ def create():
         )
         student.add()
         return redirect(url_for('.index'))
+    
+    if request.method == 'POST' and form.validate():
+        image_url = None
+        if form.profile_pic.data:
+            upload_result = cloudinary.uploader.upload(form.profile_pic.data)
+            image_url = upload_result['secure_url']
+
+        student = StudentModel.Students(
+            student_id=form.student_id.data,
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            gender=form.gender.data,
+            course=form.course.data,
+            year=form.year.data,
+            image_url=image_url
+        )
+        student.add()
+        return redirect(url_for('.index'))
 
     return render_template('student/create.html', form=form)
-
 
 # Edit student
 @student.route('/edit/<string:student_id>', methods=['GET'])
@@ -80,22 +99,40 @@ def edit(student_id):
 
 @student.route('/update/<string:student_id>', methods=['POST'])
 def update(student_id):
-    # Manually get POST data
+    form = StudentForm()
+
+    # Repopulate choices
+    form.course.choices = [(c['code'], c['name']) for c in CourseModel.Courses.all()]
+    form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
+    form.college.choices = [(c['code'], c['name']) for c in CollegeModel.Colleges.all()]
+    
+    # Get data
     firstname = request.form.get('firstname')
     lastname = request.form.get('lastname')
     gender = request.form.get('gender')
     course = request.form.get('course')
     year = request.form.get('year')
+    remove_pic = request.form.get('remove_pic')  # checkbox
 
-    # Perform update
+    image_url = form.image_url.data  # current image
+
+    file = request.files.get('profile_pic')
+    if file and file.filename:
+        result = cloudinary.uploader.upload(file, folder="students")
+        image_url = result.get('secure_url')
+    elif remove_pic:  # checkbox checked
+        image_url = None
+
     StudentModel.Students.update(
         student_id=student_id,
         firstname=firstname,
         lastname=lastname,
         gender=gender,
         course=course,
-        year=year
+        year=year,
+        image_url=image_url
     )
+
     return redirect(url_for('student.index'))
 
 # Delete student

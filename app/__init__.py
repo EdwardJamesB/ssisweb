@@ -3,6 +3,7 @@ from app.extensions import db
 from flask_bootstrap import Bootstrap
 from config import DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, SECRET_KEY, BOOTSTRAP_SERVE_LOCAL
 from flask_wtf.csrf import CSRFProtect
+from app import cloudinary_config  
 
 bootstrap = Bootstrap()
 

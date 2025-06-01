@@ -27,6 +27,7 @@
     <thead class="table-dark">
       <tr>
         <th>Student ID</th>
+        <th>Photo</th>
         <th>Firstname</th>
         <th>Lastname</th>
         <th>Gender</th>
@@ -39,6 +40,13 @@
       {% for s in students %}
       <tr>
         <td>{{ s[0] }}</td>  <!-- student_id -->
+        <td>
+          {% if s[6] %}
+            <img src="{{ s[6] }}" alt="Profile" width="50" height="50" style="object-fit: cover; border-radius: 50%;">
+          {% else %}
+            <img src="{{ url_for('static', filename='img/default-avatar.png') }}" alt="Default" width="50" height="50" style="object-fit: cover; border-radius: 50%;">
+          {% endif %}
+        </td>
         <td>{{ s[1] }}</td>  <!-- firstname -->
         <td>{{ s[2] }}</td>  <!-- lastname -->
         <td>{{ s[3] }}</td>  <!-- gender -->

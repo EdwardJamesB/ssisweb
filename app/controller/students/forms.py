@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired
+from flask_wtf.file import FileField, FileAllowed
 
 class StudentForm(FlaskForm):
     student_id = StringField('Student ID', validators=[DataRequired()])
@@ -14,3 +15,7 @@ class StudentForm(FlaskForm):
     course = SelectField('Course', coerce=str, validators=[DataRequired()])
     year = SelectField('Year Level', coerce=str, validators=[DataRequired()])
     college = SelectField('College', coerce=str, validators=[DataRequired()])
+    profile_pic = FileField('Profile Picture', validators=[
+        FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')
+    ])
+    image_url = StringField()
