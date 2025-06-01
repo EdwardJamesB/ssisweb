@@ -42,7 +42,7 @@ def update(id):
         print("College updated successfully")
         return redirect(url_for('.index'))
 
-@college.route('//delete', methods=['POST'])
+@college.route('/college/delete', methods=['POST'])
 def delete():
     id = request.form["id"]
     CollegeModel.Colleges.delete(id)
