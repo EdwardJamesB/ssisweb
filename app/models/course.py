@@ -33,7 +33,7 @@ class Courses:
         query = f"""
             SELECT course.id, course.code, course.name, college.name AS college_name
             FROM course
-            JOIN college ON course.college = college.id
+            LEFT JOIN college ON course.college = college.id
             WHERE course.code LIKE %s OR course.name LIKE %s OR college.name LIKE %s
             ORDER BY {sort_by} {sort_order}
         """
