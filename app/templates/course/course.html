@@ -34,6 +34,16 @@
       {{ sort_button('Sort by Name', 'name') }}
       {{ sort_button('Sort by College', 'college_name') }}
     </div>
+
+    <div class="col-md-auto">
+      <label for="per_page" class="form-label">Show:</label>
+      <select name="per_page" id="per_page" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+        {% for size in [10, 25, 50, 100] %}
+          <option value="{{ size }}" {% if per_page == size %}selected{% endif %}>{{ size }}</option>
+        {% endfor %}
+      </select>
+      <span class="ms-1">entries per page</span>
+    </div>
   </form>
 
   <a href="{{ url_for('course.create') }}" class="btn btn-success mb-3">Add Course</a>
@@ -70,6 +80,22 @@
         {% endfor %}
       </tbody>
     </table>
+    
+    <!-- Pagination Controls -->
+    {% set total_pages = (total // per_page) + (1 if total % per_page else 0) %}
+    <nav>
+      <ul class="pagination justify-content-center mt-3">
+        {% for p in range(1, total_pages + 1) %}
+          <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link"
+              href="{{ url_for('course.index', keyword=keyword, sort_by=sort_by, sort=sort_order, per_page=per_page, page=p) }}">
+              {{ p }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    
   </div>
 </div>
 
