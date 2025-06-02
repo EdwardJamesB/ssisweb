@@ -28,8 +28,7 @@ class Students:
         sort_order = 'ASC' if sort_order == 'asc' else 'DESC'
 
         query = f"""
-            SELECT student.student_id, student.firstname, student.lastname, student.gender,
-                course.name AS course_name, student.year, student.image_url
+            SELECT student.student_id, student.firstname, student.lastname, course.name AS course_name, student.year, student.gender, student.image_url
             FROM student
             LEFT JOIN course ON student.course = course.code
             WHERE student.student_id LIKE %s

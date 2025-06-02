@@ -4,7 +4,18 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Add New Student</h2>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="mb-3">
+      <label>Upload Profile Picture</label>
+      <input type="file" class="form-control" name="profile_pic" accept="image/*">
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" name="remove_pic" id="remove_pic">
+      <label class="form-check-label" for="remove_pic">Use default avatar instead</label>
+    </div>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
     <div class="mb-3">{{ form.student_id.label }} {{ form.student_id(class_="form-control") }}</div>
@@ -27,26 +38,38 @@
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = form.querySelector("button[type=submit]");
-    
     const inputs = form.querySelectorAll("input, select");
-    
+    const removePicCheckbox = document.querySelector("input[name='remove_pic']");
+    const profilePicInput = document.querySelector("input[name='profile_pic']");
+
     function checkForm() {
       let isValid = true;
+
       inputs.forEach(input => {
-        if (input.type !== "hidden" && !input.value.trim()) {
+        // Skip hidden fields and the file input
+        if (input.type === "hidden" || input.name === "profile_pic") return;
+
+        // For file input, only check if "use default avatar" is NOT checked
+        if (input.name === "profile_pic" && !removePicCheckbox.checked && !input.value) {
+          isValid = false;
+        }
+
+        // General validation for other fields
+        if (input.name !== "remove_pic" && !input.value.trim()) {
           isValid = false;
         }
       });
+
       submitBtn.disabled = !isValid;
     }
 
+    // Watch all inputs
     inputs.forEach(input => {
       input.addEventListener("input", checkForm);
       input.addEventListener("change", checkForm);
     });
 
-    // Initial check
-    checkForm();
+    checkForm(); // Initial
   });
 </script>
 

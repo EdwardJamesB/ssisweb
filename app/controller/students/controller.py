@@ -22,17 +22,8 @@ def create():
     form = StudentForm()
 
     # Populate dropdowns
-    form.gender.choices = [
-        ('Male', 'Male'),
-        ('Female', 'Female'),
-        ('Prefer not to say', 'Prefer not to say')
-    ]
-    form.year.choices = [
-        ('1st Year', '1st Year'),
-        ('2nd Year', '2nd Year'),
-        ('3rd Year', '3rd Year'),
-        ('4th Year', '4th Year')
-    ]
+    form.gender.choices = [('Male', 'Male'), ('Female', 'Female'), ('Prefer not to say', 'Prefer not to say')]
+    form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
     form.college.choices = [("", "-- Please select a college --")] + [
         (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
     ]
@@ -41,22 +32,13 @@ def create():
     ]
 
     if request.method == 'POST' and form.validate():
-        student = StudentModel.Students(
-            student_id=form.student_id.data,
-            firstname=form.firstname.data,
-            lastname=form.lastname.data,
-            gender=form.gender.data,
-            course=form.course.data,  
-            year=form.year.data
-        )
-        student.add()
-        return redirect(url_for('.index'))
-    
-    if request.method == 'POST' and form.validate():
         image_url = None
-        if form.profile_pic.data:
-            upload_result = cloudinary.uploader.upload(form.profile_pic.data)
-            image_url = upload_result['secure_url']
+        file = request.files.get('profile_pic')
+        if file and file.filename:
+            upload_result = cloudinary.uploader.upload(file, folder="students")
+            image_url = upload_result.get('secure_url')
+        elif request.form.get('remove_pic'):  # Checkbox for default
+            image_url = None  # default avatar
 
         student = StudentModel.Students(
             student_id=form.student_id.data,
@@ -81,20 +63,27 @@ def edit(student_id):
 
     form = StudentForm()
 
-    # Assign the current values from the database
-    form.student_id.data = student[0]
-    form.firstname.data = student[1]
-    form.lastname.data = student[2]
-    form.gender.data = student[3]
-    form.course.data = student[4]
-    form.year.data = student[5]
-
-    # Repopulate dropdown choices
+    # 🟢 1. Set choices first
     form.gender.choices = [('Male', 'Male'), ('Female', 'Female'), ('Prefer not to say', 'Prefer not to say')]
     form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
     form.course.choices = [("", "-- Please select a course --")] + [
         (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
+    form.college.choices = [("", "-- Please select a college --")] + [
+        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
+    ]
+
+    # 🟢 2. Now assign values AFTER defining choices
+    form.student_id.data = student[0]
+    form.firstname.data = student[1]
+    form.lastname.data = student[2]
+    form.gender.data = student[5]
+
+    # Make sure these match values in choices exactly
+    form.course.data = str(student[3]) if student[3] else ""
+    form.year.data = str(student[4]) if student[4] else ""
+
+    form.image_url.data = student[6]
 
     return render_template('student/edit.html', form=form, student_id=student_id)
 
@@ -103,9 +92,13 @@ def update(student_id):
     form = StudentForm()
 
     # Repopulate choices
-    form.course.choices = [(c['code'], c['name']) for c in CourseModel.Courses.all()]
+    form.course.choices = [("", "-- Please select a course --")] + [
+    (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
+    ]
     form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
-    form.college.choices = [(c['code'], c['name']) for c in CollegeModel.Colleges.all()]
+    form.college.choices = [("", "-- Please select a college --")] + [
+        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
+    ]
     
     # Get data
     firstname = request.form.get('firstname')
