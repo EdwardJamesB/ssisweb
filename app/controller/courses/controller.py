@@ -10,12 +10,13 @@ import app.models.college as CollegeModel
 def index():
     keyword = request.args.get('keyword', default='', type=str)
     sort_order = request.args.get('sort')
+    sort_by = request.args.get('sort_by', 'code') 
 
     if not sort_order:
         sort_order = 'asc'
 
-    courses = CourseModel.Courses.all(keyword, sort_order)
-    return render_template('course/course.html', courses=courses, sort_order=sort_order)
+    courses = CourseModel.Courses.all(keyword, sort_order, sort_by)
+    return render_template('course/course.html', courses=courses, sort_order=sort_order, sort_by=sort_by)
 
 # Create course
 @course.route('/create', methods=['GET', 'POST'])

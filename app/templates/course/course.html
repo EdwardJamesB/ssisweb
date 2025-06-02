@@ -4,20 +4,35 @@
 <div class="container mt-4">
   <h2 class="mb-4">Courses</h2>
 
-  <!-- Search + Sort -->
-  <form method="get" action="{{ url_for('course.index') }}" class="row g-2 mb-3">
+  <!-- Search + Sort Buttons (all in one row) -->
+  <form method="get" action="{{ url_for('course.index') }}" class="row g-2 mb-3 align-items-center">
     <div class="col-md-4">
-      <input type="text" class="form-control" name="keyword" placeholder="Search" value="{{ request.args.get('keyword', '') }}">
+      <input type="text" class="form-control" name="keyword" placeholder="Search"
+            value="{{ request.args.get('keyword', '') }}">
     </div>
+
     <div class="col-md-auto">
       <button type="submit" class="btn btn-primary">Search</button>
       <a href="{{ url_for('course.index') }}" class="btn btn-secondary">Clear</a>
     </div>
-    <div class="col-md-auto">
-      {% set next_sort = 'desc' if sort_order == 'asc' else 'asc' %}
-      <a href="{{ url_for('course.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" class="btn btn-info">
-        Sort by Code {{ '↑' if sort_order == 'asc' else '↓' }}
+
+    {% set current_sort = sort_order %}
+    {% set current_sort_by = sort_by %}
+    {% set keyword = request.args.get('keyword', '') %}
+
+    {% macro sort_button(label, field) %}
+      {% set is_active = current_sort_by == field %}
+      {% set sort_dir = 'desc' if is_active and current_sort == 'asc' else 'asc' %}
+      {% set arrow = '↑' if is_active and current_sort == 'asc' else '↓' if is_active else '' %}
+      <a href="{{ url_for('course.index', keyword=keyword, sort=sort_dir, sort_by=field) }}" class="btn btn-info">
+        {{ label }} {{ arrow }}
       </a>
+    {% endmacro %}
+
+    <div class="col-md-auto">
+      {{ sort_button('Sort by Code', 'code') }}
+      {{ sort_button('Sort by Name', 'name') }}
+      {{ sort_button('Sort by College', 'college_name') }}
     </div>
   </form>
 

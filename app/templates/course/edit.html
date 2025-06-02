@@ -20,8 +20,8 @@
       <label for="college">College</label>
       <select id="college" name="college" class="form-select">
         {% for c in colleges %}
-          <option value="{{ c['code'] }}" {% if c['code'] == data[2] %}selected{% endif %}>
-            {{ c['name'] }}
+          <option value="{{ c['id'] }}" {% if c['id'] == data[2] %}selected{% endif %}>
+            {{ c['name'] }} ({{ c['code'] }})
           </option>
         {% endfor %}
       </select>

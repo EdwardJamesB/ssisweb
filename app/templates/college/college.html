@@ -3,22 +3,32 @@
 <div class="container mt-4">
   <h2 class="mb-4">Colleges</h2>
 
-  <!-- Search Form -->
-  <form method="get" action="{{ url_for('college.index') }}" class="row g-2 mb-3">
+  <!-- Search + Sort Form in one row -->
+  <form method="get" action="{{ url_for('college.index') }}" class="row g-2 mb-3 align-items-center">
     <div class="col-md-4">
       <input type="text" class="form-control" placeholder="Search" name="keyword"
-             value="{{ request.args.get('keyword', '') }}">
+            value="{{ request.args.get('keyword', '') }}">
     </div>
-    <input type="hidden" name="sort" value="{{ request.args.get('sort', 'asc') }}">
     <div class="col-md-auto">
       <button type="submit" class="btn btn-primary">Search</button>
-      <a href="{{ url_for('college.index', sort='asc') }}" class="btn btn-secondary">Clear</a>
+      <a href="{{ url_for('college.index') }}" class="btn btn-secondary">Clear</a>
+    </div>
+    <div class="col-md-auto">
       {% set current_sort = request.args.get('sort', 'asc') %}
-      {% set next_sort = 'desc' if current_sort == 'asc' else 'asc' %}
-      <a href="{{ url_for('college.index', keyword=request.args.get('keyword', ''), sort=next_sort) }}" 
-        class="btn btn-info">
-        Sort by Code {{ '↑' if current_sort == 'asc' else '↓' }}
-      </a>
+      {% set current_sort_by = request.args.get('sort_by', 'code') %}
+      {% set keyword = request.args.get('keyword', '') %}
+
+      {% macro sort_button(label, field) %}
+        {% set is_active = current_sort_by == field %}
+        {% set sort_dir = 'desc' if is_active and current_sort == 'asc' else 'asc' %}
+        {% set arrow = '↑' if is_active and current_sort == 'asc' else '↓' if is_active else '' %}
+        <a href="{{ url_for('college.index', keyword=keyword, sort=sort_dir, sort_by=field) }}" class="btn btn-info">
+          {{ label }} {{ arrow }}
+        </a>
+      {% endmacro %}
+
+      {{ sort_button('Sort by Code', 'code') }}
+      {{ sort_button('Sort by Name', 'name') }}
     </div>
   </form>
 
@@ -42,11 +52,11 @@
           <td>{{ college.name }}</td>
           <td>
             <a href="{{ url_for('college.edit', id=college.id) }}" class="btn btn-warning btn-sm">Edit</a>
-            <form method="POST" class="d-inline delete-form">
+            <form method="POST" action="{{ url_for('college.delete') }}" class="d-inline delete-form">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="id" value="{{ college.id }}">
               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>                       
+            </form>
           </td>
         </tr>
         {% else %}

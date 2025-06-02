@@ -19,29 +19,25 @@ class Courses:
             print("[ERROR] Failed to add course:", e)
 
     @staticmethod
-    def all(keyword='', sort_order='asc'):
+    def all(keyword='', sort_order='asc', sort_by='code'):
         conn = db.connection
         cursor = conn.cursor(dictionary=True)
+        wildcard = f"%{keyword}%"
 
-        if keyword:
-            wildcard = f"%{keyword}%"
-            query = f"""
-                SELECT course.id, course.code, course.name, college.name AS college_name
-                FROM course
-                JOIN college ON course.college = college.id
-                WHERE course.code LIKE %s OR course.name LIKE %s OR college.name LIKE %s
-                ORDER BY course.code {'ASC' if sort_order == 'asc' else 'DESC'}
-            """
-            cursor.execute(query, (wildcard, wildcard, wildcard))
-        else:
-            query = f"""
-                SELECT course.id, course.code, course.name, college.name AS college_name
-                FROM course
-                JOIN college ON course.college = college.id
-                ORDER BY course.code {'ASC' if sort_order == 'asc' else 'DESC'}
-            """
-            cursor.execute(query)
+        # Validate inputs
+        if sort_by not in ['code', 'name', 'college_name']:
+            sort_by = 'code'
+        if sort_order not in ['asc', 'desc']:
+            sort_order = 'asc'
 
+        query = f"""
+            SELECT course.id, course.code, course.name, college.name AS college_name
+            FROM course
+            JOIN college ON course.college = college.id
+            WHERE course.code LIKE %s OR course.name LIKE %s OR college.name LIKE %s
+            ORDER BY {sort_by} {sort_order}
+        """
+        cursor.execute(query, (wildcard, wildcard, wildcard))
         return cursor.fetchall()
 
     @staticmethod

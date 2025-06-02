@@ -12,8 +12,9 @@ import cloudinary.uploader
 def index():
     keyword = request.args.get('keyword', default='', type=str)
     sort_order = request.args.get('sort', 'asc')
-    students = StudentModel.Students.all(keyword, sort_order)
-    return render_template('student/student.html', students=students, sort_order=sort_order)
+    sort_by = request.args.get('sort_by', 'student_id')  # Default sort
+    students = StudentModel.Students.all(keyword, sort_order, sort_by)
+    return render_template('student/student.html', students=students, sort_order=sort_order, sort_by=sort_by)
 
 # Create student
 @student.route('/create', methods=['GET', 'POST'])

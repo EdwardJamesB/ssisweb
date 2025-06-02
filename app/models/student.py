@@ -11,18 +11,35 @@ class Students:
         self.image_url = image_url
 
     @staticmethod
-    def all(keyword='', sort_order='asc'):
+    def all(keyword='', sort_order='asc', sort_by='student_id'):
+        conn = db.connection
+        cursor = conn.cursor()
+        wildcard = f"%{keyword}%"
+
+        # Validate sort_by and sort_order to prevent SQL injection
+        valid_sort_columns = {
+            'student_id': 'student.student_id',
+            'firstname': 'student.firstname',
+            'lastname': 'student.lastname',
+            'course': 'course.name',
+            'year': 'student.year'
+        }
+        sort_column = valid_sort_columns.get(sort_by, 'student.student_id')
+        sort_order = 'ASC' if sort_order == 'asc' else 'DESC'
+
         query = f"""
             SELECT student.student_id, student.firstname, student.lastname, student.gender,
                 course.name AS course_name, student.year, student.image_url
             FROM student
-            LEFT JOIN course ON student.course = course.code  -- or course.id if you're using numeric FK
-            WHERE student.student_id LIKE %s OR student.firstname LIKE %s OR student.lastname LIKE %s
-            ORDER BY student.student_id {'ASC' if sort_order.lower() == 'asc' else 'DESC'}
+            LEFT JOIN course ON student.course = course.code
+            WHERE student.student_id LIKE %s
+            OR student.firstname LIKE %s
+            OR student.lastname LIKE %s
+            OR course.name LIKE %s
+            OR student.year LIKE %s
+            ORDER BY {sort_column} {sort_order}
         """
-        wildcard_keyword = f"%{keyword}%"
-        cursor = db.connection.cursor()
-        cursor.execute(query, (wildcard_keyword, wildcard_keyword, wildcard_keyword))
+        cursor.execute(query, (wildcard, wildcard, wildcard, wildcard, wildcard))
         results = cursor.fetchall()
         cursor.close()
         return results

@@ -7,22 +7,23 @@ class Colleges(object):
         self.code = code
 
     @staticmethod
-    def all(keyword='', sort_order='asc'):
+    def all(keyword='', sort_order='asc', sort_by='code'):
         conn = db.connection
         cursor = conn.cursor(dictionary=True)
+        wildcard = f"%{keyword}%"
 
-        # Validate sort_order
-        sort_order = sort_order.upper()
-        if sort_order not in ['ASC', 'DESC']:
-            sort_order = 'ASC'
+        if sort_by not in ['code', 'name']:
+            sort_by = 'code'
+        if sort_order not in ['asc', 'desc']:
+            sort_order = 'asc'
 
-        query = """
-            SELECT id, code, name FROM college
-            WHERE name LIKE %s OR code LIKE %s
-            ORDER BY code {}
-        """.format('ASC' if sort_order.lower() == 'asc' else 'DESC')
-        wildcard_keyword = f"%{keyword}%"
-        cursor.execute(query, (wildcard_keyword, wildcard_keyword))
+        query = f"""
+            SELECT id, code, name
+            FROM college
+            WHERE code LIKE %s OR name LIKE %s
+            ORDER BY {sort_by} {sort_order}
+        """
+        cursor.execute(query, (wildcard, wildcard))
         return cursor.fetchall()
 
     def add(self):
