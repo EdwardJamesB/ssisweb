@@ -6,6 +6,10 @@ import app.models.course as CourseModel
 import app.models.college as CollegeModel
 from app.cloudinary_config import cloudinary
 import cloudinary.uploader
+from werkzeug.utils import secure_filename
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+MAX_FILE_SIZE_MB = 2
 
 # Show list of students
 @student.route('/', endpoint='index')
@@ -44,8 +48,22 @@ def create():
         image_url = None
         file = request.files.get('profile_pic')
         if file and file.filename:
+            filename = secure_filename(file.filename)
+            ext = filename.rsplit('.', 1)[1].lower()
+
+            if ext not in ALLOWED_EXTENSIONS:
+                return "❌ Invalid file type. Only PNG and JPG are allowed.", 400
+
+            file.seek(0, 2)  # move to end
+            size_mb = file.tell() / (1024 * 1024)
+            file.seek(0)     # reset
+
+            if size_mb > MAX_FILE_SIZE_MB:
+                return f"❌ File too large. Max allowed is {MAX_FILE_SIZE_MB}MB.", 400
+
             upload_result = cloudinary.uploader.upload(file, folder="students")
             image_url = upload_result.get('secure_url')
+
         elif request.form.get('remove_pic'):  # Checkbox for default
             image_url = None  # default avatar
 
@@ -121,6 +139,19 @@ def update(student_id):
 
     file = request.files.get('profile_pic')
     if file and file.filename:
+        filename = secure_filename(file.filename)
+        ext = filename.rsplit('.', 1)[1].lower()
+
+        if ext not in ALLOWED_EXTENSIONS:
+            return "❌ Invalid file type. Only PNG and JPG are allowed.", 400
+
+        file.seek(0, 2)
+        size_mb = file.tell() / (1024 * 1024)
+        file.seek(0)
+
+        if size_mb > MAX_FILE_SIZE_MB:
+            return f"❌ File too large. Max allowed is {MAX_FILE_SIZE_MB}MB.", 400
+
         result = cloudinary.uploader.upload(file, folder="students")
         image_url = result.get('secure_url')
     elif remove_pic:  # checkbox checked

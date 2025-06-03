@@ -23,7 +23,7 @@
 
     <div class="mb-3">
       <label>Change Profile Picture</label>
-      <input class="form-control" type="file" name="profile_pic" accept="image/*">
+      <input class="form-control" type="file" name="profile_pic" accept="image/png, image/jpeg">
     </div>
 
     <div class="mb-3 form-check">
@@ -78,4 +78,27 @@
     updateBtn.disabled = !changed;
   });
 </script>
+
+<script>
+  const fileInput = document.querySelector('input[name="profile_pic"]');
+  const MAX_SIZE_MB = 2;
+
+  fileInput?.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['jpg', 'jpeg', 'png'].includes(ext)) {
+      alert("❌ Only JPG and PNG files are allowed.");
+      fileInput.value = ""; // clear the file
+      return;
+    }
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`❌ File is too large. Max size is ${MAX_SIZE_MB}MB.`);
+      fileInput.value = ""; // clear the file
+    }
+  });
+</script>
+
 {% endblock %}
