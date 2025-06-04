@@ -37,9 +37,6 @@ def create():
     # Populate dropdowns
     form.gender.choices = [('Male', 'Male'), ('Female', 'Female'), ('Prefer not to say', 'Prefer not to say')]
     form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
-    form.college.choices = [("", "-- Please select a college --")] + [
-        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
-    ]
     form.course.choices = [("", "-- Please select a course --")] + [
         (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
@@ -96,9 +93,9 @@ def edit(student_id):
     form.course.choices = [("", "-- Please select a course --")] + [
         (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
-    form.college.choices = [("", "-- Please select a college --")] + [
-        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
-    ]
+    # form.college.choices = [("", "-- Please select a college --")] + [
+    #     (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
+    # ]
 
     # 🟢 2. Now assign values AFTER defining choices
     form.student_id.data = student[0]
@@ -123,9 +120,9 @@ def update(student_id):
     (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
     form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
-    form.college.choices = [("", "-- Please select a college --")] + [
-        (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
-    ]
+    # form.college.choices = [("", "-- Please select a college --")] + [
+    #     (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
+    # ]
     
     # Get data
     firstname = request.form.get('firstname')

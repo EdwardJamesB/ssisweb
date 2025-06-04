@@ -14,7 +14,6 @@ class StudentForm(FlaskForm):
     ], validators=[DataRequired()])
     course = SelectField('Course', coerce=str, validators=[DataRequired()])
     year = SelectField('Year Level', coerce=str, validators=[DataRequired()])
-    college = SelectField('College', coerce=str, validators=[DataRequired()])
     profile_pic = FileField('Profile Picture', validators=[
         FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')
     ])
