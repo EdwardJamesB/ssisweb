@@ -49,14 +49,14 @@ def create():
             ext = filename.rsplit('.', 1)[1].lower()
 
             if ext not in ALLOWED_EXTENSIONS:
-                return "❌ Invalid file type. Only PNG and JPG are allowed.", 400
+                return "Invalid file type. Only PNG and JPG are allowed.", 400
 
             file.seek(0, 2)  # move to end
             size_mb = file.tell() / (1024 * 1024)
             file.seek(0)     # reset
 
             if size_mb > MAX_FILE_SIZE_MB:
-                return f"❌ File too large. Max allowed is {MAX_FILE_SIZE_MB}MB.", 400
+                return f"File too large. Max allowed is {MAX_FILE_SIZE_MB}MB.", 400
 
             upload_result = cloudinary.uploader.upload(file, folder="students")
             image_url = upload_result.get('secure_url')
@@ -73,8 +73,16 @@ def create():
             year=form.year.data,
             image_url=image_url
         )
-        student.add()
-        return redirect(url_for('.index'))
+        try:
+            student.add()
+            return redirect(url_for('.index'))
+        except Exception as e:
+            if "1062" in str(e) and "student.PRIMARY" in str(e):
+                error = "Student ID already exists."
+            else:
+                error = "An unexpected error occurred."
+
+            return render_template('student/create.html', form=form, error=error)
 
     return render_template('student/create.html', form=form)
 
@@ -93,9 +101,6 @@ def edit(student_id):
     form.course.choices = [("", "-- Please select a course --")] + [
         (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
-    # form.college.choices = [("", "-- Please select a college --")] + [
-    #     (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
-    # ]
 
     # 🟢 2. Now assign values AFTER defining choices
     form.student_id.data = student[0]
@@ -120,9 +125,6 @@ def update(student_id):
     (c["code"], f'{c["code"]} - {c["name"]}') for c in CourseModel.Courses.all()
     ]
     form.year.choices = [('1st Year', '1st Year'), ('2nd Year', '2nd Year'), ('3rd Year', '3rd Year'), ('4th Year', '4th Year')]
-    # form.college.choices = [("", "-- Please select a college --")] + [
-    #     (str(c['id']), c['name']) for c in CollegeModel.Colleges.all()
-    # ]
     
     # Get data
     firstname = request.form.get('firstname')
